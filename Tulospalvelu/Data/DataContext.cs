@@ -4,12 +4,6 @@ namespace Tulospalvelu.Data
 {
     public class DataContext : DbContext
     {
-        IConfiguration iConfig;
-        DataContext(IConfiguration iconfig)
-        {
-            iConfig = iconfig;
-        }
-
         public DataContext()
         {
         }
