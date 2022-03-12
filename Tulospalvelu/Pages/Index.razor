@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using Tulospalvelu.Data
 @inject TilastoService service
+@attribute [Authorize]
 <PageTitle>Etusivu</PageTitle>
 
 <table class="table table-striped">
