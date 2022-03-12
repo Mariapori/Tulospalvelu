@@ -1,0 +1,81 @@
+﻿@page "/joukkueet"
+@using Tulospalvelu.Data
+@inject TilastoService service
+@inject IJSRuntime JsRuntime
+<PageTitle>Joukkueet</PageTitle>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nimi</th>
+            <th>Toiminnot</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var joukkue in joukkueet)
+        {
+            <tr>
+                <td>@joukkue.Nimi</td>
+                <td><button class="btn btn-info text-white" @onclick="() => MuokkaaJoukkue(joukkue)">Muokkaa</button> <button class="btn btn-danger" @onclick="() => PoistaJoukkue(joukkue)">Poista</button></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h2>Uusi joukkue</h2>
+<input @bind=Nimi placeholder="Joukkuuen nimi" />
+<button class="btn btn-info text-white" @onclick=UusiJoukkue>Uusi joukkue</button>
+
+
+
+@code{
+    private string? Nimi;
+
+
+    List<Data.Joukkue> joukkueet = new List<Data.Joukkue>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        joukkueet = await service.HaeJoukkueet();
+    }
+
+
+
+    void UusiJoukkue()
+    {
+        Joukkue uus = new Joukkue();
+        uus.Nimi = Nimi;
+        var onnistui = service.LisaaJoukkue(uus);
+
+        if (onnistui)
+        {
+            joukkueet.Add(uus);
+            Nimi = null;
+        }
+
+    }
+
+    void PoistaJoukkue(Joukkue joukkue)
+    {
+        var onnistui = service.PoistaJoukkue(joukkue);
+        if (onnistui)
+        {
+            joukkueet.Remove(joukkue);
+        }
+    }
+
+    async void MuokkaaJoukkue(Joukkue joukkue)
+    {
+        string UusiNimi = await JsRuntime.InvokeAsync<string>("prompt", "Uusi nimi:");
+        if(!string.IsNullOrWhiteSpace(UusiNimi))
+        {
+        var onnistui = service.MuokkaaJoukkue(joukkue, UusiNimi);
+        if (onnistui)
+        {
+            joukkue.Nimi = UusiNimi;
+            StateHasChanged();
+        }
+        }
+
+    }
+}

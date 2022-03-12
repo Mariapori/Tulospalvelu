@@ -1,0 +1,38 @@
+﻿@page "/"
+@using Tulospalvelu.Data
+@inject TilastoService service
+<PageTitle>Etusivu</PageTitle>
+
+<table class="table table-striped">
+        <tr>
+            <th>Koti</th>
+            <th>Vieras</th>
+            <th>PVM</th>
+        </tr>
+        @foreach(var tilasto in tilastot)
+        {
+         <tr>
+            <th>@tilasto.?koti.Nimi</th>
+            <th>@tilasto.?vieras.Nimi</th>
+            <th>@tilasto.PVM.ToShortDateString()</th>
+        </tr>
+                        <tr>
+            <td>@tilasto.KotiPistet</td>
+            <td>@tilasto.VierasPisteet</td>
+            <td></td>
+        </tr>
+        }
+
+</table>
+
+
+
+@code{
+    List<Data.Tilasto> tilastot = new List<Data.Tilasto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+       tilastot = await service.HaeTilastot();
+    }
+}
+
